@@ -1,25 +1,26 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const usersRoute = require("./routes/users");
-const authMiddleware = require("./middleware/auth");
+const cors = require("cors");
+
+// Import routes
+const authRoutes = require("./routes/auth");
+const usersRoutes = require("./routes/users"); // fixed path
 
 dotenv.config();
 
 const app = express();
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
-// Routes
-app.use("/api/users", usersRoute);
+// Mount routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", usersRoutes);
 
-// Example protected route
-app.get("/api/me", authMiddleware, (req, res) => {
-  res.json({ message: "Profile data", user: req.user });
+app.get("/", (req, res) => {
+  res.send("🚀 API is running");
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
-});
-app.get("/", (req, res) => {
-  res.send("🚀 API is running");
 });
